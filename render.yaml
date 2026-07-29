@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: vocal-stutter-transfer
+    runtime: docker
+    plan: free
+    healthCheckPath: /
