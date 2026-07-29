@@ -1,1 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Vocal Stutter Transfer</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <span class="eyebrow">REFERENCE-GUIDED AUDIO FX</span>
+      <h1>Vocal Stutter Transfer</h1>
+      <p>Upload a processed reference and your dry vocal. The app transfers retrigger timing without pitch shifting your voice.</p>
+    </section>
 
+    <form id="form" class="card">
+      <label class="file-card">
+        <span class="file-title">1. Reference vocal</span>
+        <span class="file-copy">Use the clip that contains the stutter style.</span>
+        <input id="reference" name="reference" type="file" accept="audio/*,video/*" required>
+        <span id="referenceName" class="filename">No file selected</span>
+      </label>
+
+      <label class="file-card">
+        <span class="file-title">2. Dry vocal</span>
+        <span class="file-copy">Use the vocal you want processed.</span>
+        <input id="dryVocal" name="dry_vocal" type="file" accept="audio/*,video/*" required>
+        <span id="dryName" class="filename">No file selected</span>
+      </label>
+
+      <details>
+        <summary>Sound controls</summary>
+        <div class="controls">
+          <label>Stutter level <output id="wetDbValue">-3 dB</output>
+            <input id="wetDb" type="range" min="-12" max="3" step="0.5" value="-3">
+          </label>
+          <label>Density <output id="densityValue">100%</output>
+            <input id="density" type="range" min="0.2" max="1" step="0.05" value="1">
+          </label>
+          <label>Strength <output id="strengthValue">115%</output>
+            <input id="strength" type="range" min="0.5" max="1.6" step="0.05" value="1.15">
+          </label>
+          <label>Crossfade <output id="crossfadeValue">8 ms</output>
+            <input id="crossfade" type="range" min="2" max="20" step="1" value="8">
+          </label>
+        </div>
+      </details>
+
+      <button id="processBtn" type="submit">Process vocal</button>
+      <div id="progress" class="progress" hidden><span id="progressBar"></span></div>
+      <p id="status" class="status" hidden></p>
+      <a id="downloadBtn" class="download" hidden download="processed_vocal_stutter.wav">Download WAV</a>
+    </form>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>
