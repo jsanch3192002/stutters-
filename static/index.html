@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#10061f">
+  <title>Vocal Stutter Transfer</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    :root{
+      color-scheme:dark;
+      --bg1:#120620;
+      --bg2:#2a0f55;
+      --bg3:#5b21b6;
+      --panel:rgba(20,14,35,.72);
+      --panel2:rgba(255,255,255,.055);
+      --line:rgba(255,255,255,.12);
+      --text:#fff;
+      --muted:#c8bfdc;
+      --accent:#9b5cff;
+      --accent2:#6d5dfc;
+      --success:#6ee7b7;
+      --error:#fb7185;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100dvh;
+      padding:max(18px,env(safe-area-inset-top)) 14px max(28px,env(safe-area-inset-bottom));
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 14% 10%,rgba(168,85,247,.30),transparent 28%),
+        radial-gradient(circle at 92% 18%,rgba(99,102,241,.28),transparent 28%),
+        linear-gradient(160deg,var(--bg1),var(--bg2) 48%,#16072e);
+      overflow-x:hidden;
+    }
+    body::before,body::after{
+      content:"";
+      position:fixed;
+      border-radius:999px;
+      filter:blur(60px);
+      pointer-events:none;
+      z-index:-1;
+    }
+    body::before{width:220px;height:220px;background:#9333ea55;left:-80px;top:22%}
+    body::after{width:250px;height:250px;background:#4f46e555;right:-90px;bottom:8%}
+
+    .wrap{width:min(760px,100%);margin:0 auto}
+    .hero{text-align:center;padding:18px 8px 22px}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:#e8ddff;
+      font-size:13px;
+      font-weight:800;
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+    }
+    h1{
+      margin:16px 0 8px;
+      font-size:clamp(34px,9vw,58px);
+      line-height:.98;
+      letter-spacing:-.045em;
+    }
+    .hero p{
+      margin:0 auto;
+      max-width:580px;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:16px;
+    }
+
+    .card{
+      overflow:hidden;
+      border-radius:26px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(27,18,47,.82),rgba(17,12,31,.78));
+      box-shadow:0 28px 90px rgba(0,0,0,.38);
+      backdrop-filter:blur(22px);
+      -webkit-backdrop-filter:blur(22px);
+    }
+    section{
+      padding:22px;
+      border-bottom:1px solid var(--line);
+    }
+    section:last-child{border-bottom:none}
+    .section-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:15px;
+    }
+    .section-head h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:-.015em;
+    }
+    .step{
+      width:30px;height:30px;border-radius:10px;
+      display:grid;place-items:center;
+      background:rgba(155,92,255,.16);
+      border:1px solid rgba(155,92,255,.35);
+      color:#e9dcff;
+      font-size:13px;
+      font-weight:900;
+    }
+
+    .upload-grid{display:grid;gap:14px}
+    .file-card{
+      padding:15px;
+      border-radius:18px;
+      border:1.5px dashed rgba(255,255,255,.18);
+      background:var(--panel2);
+      transition:.2s ease;
+    }
+    .file-card:focus-within{
+      border-color:rgba(155,92,255,.65);
+      background:rgba(155,92,255,.08);
+    }
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-size:14px;
+      font-weight:800;
+      color:#f2ecff;
+    }
+    input[type=file]{
+      width:100%;
+      color:#d7cdea;
+      font-size:14px;
+    }
+    input[type=file]::file-selector-button{
+      border:0;
+      border-radius:12px;
+      padding:11px 13px;
+      margin-right:10px;
+      color:#fff;
+      font-weight:900;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+    }
+    small{
+      display:block;
+      margin-top:9px;
+      color:#aaa0bf;
+      font-size:12px;
+      word-break:break-word;
+    }
+
+    .control{margin-top:16px}
+    .control:first-of-type{margin-top:0}
+    .control-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:8px;
+    }
+    .control-row span{
+      color:#d9d0ea;
+      font-size:13px;
+      font-weight:800;
+    }
+    input[type=range]{
+      width:100%;
+      accent-color:#a855f7;
+    }
+
+    button,.download{
+      width:100%;
+      min-height:56px;
+      border:0;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      color:white;
+      text-decoration:none;
+      font-size:16px;
+      font-weight:900;
+    }
+    button{
+      cursor:pointer;
+      background:linear-gradient(135deg,#a855f7,#6d5dfc);
+      box-shadow:0 16px 36px rgba(109,93,252,.34);
+    }
+    button:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .download{
+      margin-top:12px;
+      background:rgba(110,231,183,.12);
+      border:1px solid rgba(110,231,183,.34);
+      color:#c8ffe9;
+    }
+
+    .status{
+      margin-top:12px;
+      padding:13px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.045);
+      border:1px solid var(--line);
+      color:#e5ddf3;
+      line-height:1.45;
+      font-size:14px;
+    }
+    .status.error{
+      background:rgba(251,113,133,.09);
+      border-color:rgba(251,113,133,.35);
+      color:#ffd0d7;
+    }
+    .status.success{
+      background:rgba(110,231,183,.09);
+      border-color:rgba(110,231,183,.35);
+      color:#c8ffe9;
+    }
+
+    .progress{
+      height:9px;
+      margin-top:12px;
+      overflow:hidden;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+    }
+    .progress>div{
+      width:35%;
+      height:100%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#c084fc,#7c3aed,#6366f1);
+      animation:load 1.1s infinite ease-in-out;
+    }
+    @keyframes load{
+      from{transform:translateX(-120%)}
+      to{transform:translateX(360%)}
+    }
+
+    .footer{
+      padding:16px 8px 2px;
+      text-align:center;
+      color:#9f95b4;
+      font-size:12px;
+    }
+
+    @media(min-width:650px){
+      .upload-grid{grid-template-columns:1fr 1fr}
+      section{padding:25px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="badge">✦ AI-style reference analysis</div>
+      <h1>Vocal Stutter Transfer</h1>
+      <p>
+        Upload the processed reference and your dry vocal. The app analyzes the reference stutter timing
+        and transfers a similar effect without intentional pitch shifting.
+      </p>
+    </header>
+
+    <form id="form" class="card">
+      <section>
+        <div class="section-head">
+          <h2>Choose your audio</h2>
+          <div class="step">1</div>
+        </div>
+
+        <div class="upload-grid">
+          <div class="file-card">
+            <label for="reference">Processed reference vocal</label>
+            <input id="reference" type="file" required>
+            <small id="referenceName">No file selected</small>
+          </div>
+
+          <div class="file-card">
+            <label for="dryVocal">Dry vocal</label>
+            <input id="dryVocal" type="file" required>
+            <small id="dryName">No file selected</small>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Stutter settings</h2>
+          <div class="step">2</div>
+        </div>
+
+        <div class="control">
+          <div class="control-row">
+            <label for="wetDb">Wet level</label>
+            <span id="wetDbValue">-3 dB</span>
+          </div>
+          <input id="wetDb" type="range" min="-18" max="0" value="-3" step="1">
+        </div>
+
+        <div class="control">
+          <div class="control-row">
+            <label for="density">Stutter density</label>
+            <span id="densityValue">100%</span>
+          </div>
+          <input id="density" type="range" min="0.2" max="1" value="1" step="0.05">
+        </div>
+
+        <div class="control">
+          <div class="control-row">
+            <label for="strength">Strength</label>
+            <span id="strengthValue">110%</span>
+          </div>
+          <input id="strength" type="range" min="0.25" max="1.5" value="1.1" step="0.05">
+        </div>
+
+        <div class="control">
+          <div class="control-row">
+            <label for="crossfade">Crossfade</label>
+            <span id="crossfadeValue">8 ms</span>
+          </div>
+          <input id="crossfade" type="range" min="2" max="20" value="8" step="1">
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Analyze and render</h2>
+          <div class="step">3</div>
+        </div>
+
+        <button id="processBtn" type="submit">⚡ Process Vocal</button>
+        <div id="progress" class="progress" hidden><div></div></div>
+        <div id="status" class="status" hidden></div>
+        <a id="downloadBtn" class="download" hidden>⬇ Download processed WAV</a>
+      </section>
+    </form>
+
+    <div class="footer">Keep this Safari tab open while processing.</div>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
